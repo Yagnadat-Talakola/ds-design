@@ -63,5 +63,23 @@ We implemented a simplified **Bully Algorithm** to ensure the cluster always has
 - **Failure Detection**: If the leader (e.g., Node 5) fails, the system detects the failure and immediately promotes the next highest-ranking alive node (e.g., Node 4).
 - **Recovery**: If Node 5 comes back online, it "bullies" Node 4 out of the leader position and resumes control.
 
-### 2. Why Consensus?
-Without a leader or a consensus mechanism, nodes might disagree on the state of the cluster (a "Split Brain" scenario), leading to data inconsistency or loss. Consensus ensures all nodes eventually agree on a single source of truth.
+---
+
+## 🚩 Milestone 1: The Foundations (Current State)
+We have a functional, in-memory distributed KV store. 
+- ✅ **Sharding**: Horizontal scaling via Consistent Hashing.
+- ✅ **Replication**: Fault tolerance via the Successor Strategy.
+- ✅ **Consensus**: High availability via the Bully Leader Election.
+- ✅ **Validation**: Integrated demo simulating real-world failure scenarios.
+
+## 🗺 Future Roadmap
+When we resume, we will tackle the "Hard Problems" of Distributed Systems:
+
+1.  **Module 5: Gossip Protocols (Decentralization)**  
+    Remove the central `ClusterManager`. Let nodes discover each other and detect failures through "rumors."
+2.  **Module 6: Quorum & Consistency (CAP Theorem in Practice)**  
+    Implement `R + W > N`. Allow the user to choose between "Fast Reads" (Eventual Consistency) and "Strong Reads" (Linearizability).
+3.  **Module 7: Versioning (Vector Clocks)**  
+    Handle "Split Brain" scenarios where two nodes accept different values for the same key.
+4.  **Module 8: Persistence (LSM-Trees)**  
+    Move beyond memory. Implement a Write-Ahead Log (WAL) and SSTables to survive a full cluster power-off.
