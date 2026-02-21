@@ -39,11 +39,40 @@ public class ConsistentHashRing<T> {
         }
         int hash = hashFunction.apply(key);
         if (!ring.containsKey(hash)) {
-            // tailMap(hash) gives us all nodes with hash >= key's hash
             SortedMap<Integer, T> tailMap = ring.tailMap(hash);
-            // If tailMap is empty, wrap around to the first node in the ring
             hash = tailMap.isEmpty() ? ring.firstKey() : tailMap.firstKey();
         }
         return ring.get(hash);
+    }
+
+    /**
+     * Returns the next N unique nodes on the ring for replication.
+     */
+    public java.util.List<T> getNodes(Object key, int count) {
+        if (ring.isEmpty()) {
+            return java.util.Collections.emptyList();
+        }
+        
+        java.util.List<T> result = new java.util.ArrayList<>();
+        int hash = hashFunction.apply(key);
+        
+        // Find the starting point
+        SortedMap<Integer, T> tailMap = ring.tailMap(hash);
+        Integer currentHash = tailMap.isEmpty() ? ring.firstKey() : tailMap.firstKey();
+        
+        while (result.size() < count && result.size() < ring.size()) {
+            T node = ring.get(currentHash);
+            if (!result.contains(node)) {
+                result.add(node);
+            }
+            
+            // Move to the next node in the ring
+            SortedMap<Integer, T> nextMap = ring.tailMap(currentHash + 1);
+            currentHash = nextMap.isEmpty() ? ring.firstKey() : nextMap.firstKey();
+            
+            // Safety break for infinite loops if ring is small
+            if (currentHash.equals(hash) && !result.isEmpty()) break;
+        }
+        return result;
     }
 }
