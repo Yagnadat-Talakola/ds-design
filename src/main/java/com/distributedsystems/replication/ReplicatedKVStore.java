@@ -26,7 +26,7 @@ public class ReplicatedKVStore {
      */
     public void put(String key, String value) {
         List<StorageEngine> replicas = hashRing.getNodes(key, replicationFactor);
-        System.out.println("[Replication] Writing key '" + key + "' to " + replicas.size() + " replicas.");
+        System.out.println("[Replication] Writing key '" + key + "' to " + replicas.size() + " replicas: " + replicas);
         for (StorageEngine replica : replicas) {
             replica.put(key, value);
         }

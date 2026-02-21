@@ -10,7 +10,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * or a B-Tree based storage engine for persistence.
  */
 public class InMemoryStorageEngine implements StorageEngine {
+    private final String id;
     private final Map<String, String> store = new ConcurrentHashMap<>();
+
+    public InMemoryStorageEngine(String id) {
+        this.id = id;
+    }
 
     @Override
     public void put(String key, String value) {
@@ -25,5 +30,10 @@ public class InMemoryStorageEngine implements StorageEngine {
     @Override
     public void delete(String key) {
         store.remove(key);
+    }
+
+    @Override
+    public String toString() {
+        return id;
     }
 }

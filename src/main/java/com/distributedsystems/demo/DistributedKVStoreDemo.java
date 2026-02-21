@@ -20,7 +20,7 @@ public class DistributedKVStoreDemo {
         System.out.println("--- STEP 1: Creating a 5-node cluster ---");
         for (int i = 1; i <= 5; i++) {
             ClusterNode node = new ClusterNode(i);
-            storageNodes.add(new InMemoryStorageEngine());
+            storageNodes.add(new InMemoryStorageEngine("StorageNode-" + i));
             clusterManager.addNode(node);
         }
 

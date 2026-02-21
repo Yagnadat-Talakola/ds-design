@@ -11,8 +11,8 @@ import java.util.Optional;
 public class ReplicationTest {
     @Test
     public void testDataReplicatedToMultipleNodes() {
-        StorageEngine node1 = new InMemoryStorageEngine();
-        StorageEngine node2 = new InMemoryStorageEngine();
+        StorageEngine node1 = new InMemoryStorageEngine("Node-1");
+        StorageEngine node2 = new InMemoryStorageEngine("Node-2");
         
         ReplicatedKVStore store = new ReplicatedKVStore(1, 2, Arrays.asList(node1, node2));
         store.put("shared-key", "secret-value");
