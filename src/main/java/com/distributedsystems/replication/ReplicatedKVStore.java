@@ -26,6 +26,7 @@ public class ReplicatedKVStore {
      */
     public void put(String key, String value) {
         List<StorageEngine> replicas = hashRing.getNodes(key, replicationFactor);
+        System.out.println("[Replication] Writing key '" + key + "' to " + replicas.size() + " replicas.");
         for (StorageEngine replica : replicas) {
             replica.put(key, value);
         }
@@ -33,8 +34,6 @@ public class ReplicatedKVStore {
 
     /**
      * Read from the first available replica.
-     * In a real system, we might read from multiple and perform read-repair
-     * or use version vectors to resolve conflicts.
      */
     public Optional<String> get(String key) {
         List<StorageEngine> replicas = hashRing.getNodes(key, replicationFactor);
