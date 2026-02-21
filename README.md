@@ -7,13 +7,34 @@ This project is a simplified, modular implementation of a distributed key-value 
 - `com.distributedsystems.storage`: **Module 1 - Local Storage.** Defines how data is stored on a single machine.
 - `com.distributedsystems.sharding`: **Module 2 - Partitioning.** Defines how data is distributed across multiple machines.
 - `com.distributedsystems.replication`: **Module 3 - Redundancy.** Defines how data is copied to prevent loss.
+- `com.distributedsystems.consensus`: **Module 4 - Coordination.** Handles leader election and cluster membership.
+- `com.distributedsystems.demo`: **Integrated Demo.** A real-world simulation of cluster operations and failures.
+
+---
+
+## 🛠 Running the Project
+
+This project uses **Maven** for dependency management and execution.
+
+### 1. Run Unit Tests
+To verify all core modules (Storage, Sharding, Replication, Consensus):
+```bash
+mvn test
+```
+
+### 2. Run the Integrated Demo
+To see the system handle writes, replication, and node failures in real-time:
+```bash
+mvn exec:java -Dexec.mainClass="com.distributedsystems.demo.DistributedKVStoreDemo"
+```
 
 ---
 
 ## 🟢 Module 1: Storage Engine (The "File Cabinet")
 The foundation of the system is the `StorageEngine` interface. 
 - **Concept**: A node shouldn't care if it's part of a cluster; it only needs to know how to save and retrieve data locally.
-- **Implementation**: We use `InMemoryStorageEngine`, which wraps a `ConcurrentHashMap`. This allows us to focus on distributed logic without worrying about disk I/O or database file formats.
+- **Implementation**: We use `InMemoryStorageEngine`, which wraps a `ConcurrentHashMap`. This allows us to focus on distributed logic without worrying about disk I/O or database file formats. 
+- **Visibility**: Each storage node has a unique ID (e.g., `StorageNode-1`) for tracking data in logs.
 
 ## 🟡 Module 2: Sharding (The "Office Map")
 To scale horizontally, we need to split data across multiple nodes. We use **Consistent Hashing** to achieve this.
@@ -35,7 +56,8 @@ To prevent "hotspots" (where one node gets way more data than others), we map ea
 Sharding provides scale, but if a node dies, the data is lost. Replication solves this.
 
 ### 1. Successor Strategy
-In our model, a key isn't just stored on one node; it is stored on the primary node and the next `N-1` unique physical nodes on the ring.
+In our model, a key isn't just stored on one node; it is stored on the primary node and the next `N-1` unique physical nodes on the ring. 
+- **Visibility**: The `ReplicatedKVStore` logs the specific set of physical nodes for every write operation, allowing you to see the data distribution mapping.
 
 ### 2. Consistency Models
 - **Synchronous (Our implementation)**: We write to all replicas before confirming success. This ensures high consistency (all nodes have the data) but increases latency.
