@@ -49,3 +49,19 @@ The `ShardedKVStore` is the entry point. It acts as a **Proxy**:
 2. It asks the `ConsistentHashRing` for the correct node(s).
 3. It forwards the request to the `StorageEngine` of those nodes.
 4. The user never knows they are interacting with a complex cluster.
+
+---
+
+## 🔵 Module 4: Consensus (The "Board of Directors")
+Even in a distributed system, someone often needs to be "in charge" to coordinate tasks like rebalancing the ring or managing metadata.
+
+### 1. Leader Election
+We implemented a simplified **Bully Algorithm** to ensure the cluster always has a leader.
+- **Identity**: Every node has a unique numeric ID.
+- **Hierarchy**: Higher ID = Higher Priority.
+- **The "Bully" Logic**: The node with the highest ID that is currently alive is automatically the leader.
+- **Failure Detection**: If the leader (e.g., Node 5) fails, the system detects the failure and immediately promotes the next highest-ranking alive node (e.g., Node 4).
+- **Recovery**: If Node 5 comes back online, it "bullies" Node 4 out of the leader position and resumes control.
+
+### 2. Why Consensus?
+Without a leader or a consensus mechanism, nodes might disagree on the state of the cluster (a "Split Brain" scenario), leading to data inconsistency or loss. Consensus ensures all nodes eventually agree on a single source of truth.
